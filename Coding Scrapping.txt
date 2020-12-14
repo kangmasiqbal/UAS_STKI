@@ -1,0 +1,16 @@
+#Input Libraries
+#Untuk menjalankan skrip berikut, kita memerlukan library BeautifulSoup, urllib.
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+
+#Parsing HTML
+wiki_link = "https://id.wikipedia.org/wiki/Wikipedia"
+html = urlopen(wiki_link).read()
+soup = BeautifulSoup(html, 'html.parser')
+
+#Cari pattern dari kategori
+categories_table = soup.find("div", {"id": "mw-normal-catlinks"})
+
+#Outputkan teks dari setiap kategori yang telah ditemukan
+for each in categories_table.findAll("li"):
+    print(each.text)
