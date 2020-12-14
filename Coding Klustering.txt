@@ -1,0 +1,66 @@
+#Input Libraries
+#Untuk menjalankan skrip berikut, kita memerlukan library pandas, numpy, matpotlib, dan scikit-learn.
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt 
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import MinMaxScaler
+
+#Masukkan Data yang Akan di Kelompokkan
+#Setelah mengimpor semua dependensi yang diperlukan, selanjutnya kita akan memuat dataset.
+df = pd.read_csv(r"C:\Users\masiqbal\Downloads\stki\UAS_Mall_Customers.csv")
+
+df.head()
+
+#Pergunakan variabel yang diperlukan saja
+#Saya hanya gunakan variabel AnnualIncome dan SpendingScore saja.
+v = pd.read_csv(r"C:\Users\masiqbal\Downloads\stki\UAS_Mall_Customers.csv",usecols=["AnnualIncome","SpendingScore"])
+
+v.head()
+
+#Preprocessing Data
+#Lihat tipe data dari berbagai fitur yang dimiliki
+#Hasil: Numeric (int)
+v.info()
+
+#Visualisasi Data
+#Visualisasikan data yang ada dengan plot poin.
+plt.scatter(v.AnnualIncome, v.SpendingScore, s =10, c = "c", marker = "o", alpha = 1)
+
+#Buat Clusters dan melihat variabel yang akan dikelompokkan
+v_x = v.iloc[:, 0:2]
+
+v_x.head()
+
+#Ubah variabel data frame menjadi array sebelum menentukan nilai K.
+x_array = np.array(v_x)
+print(x_array)
+
+#Menstandarkan kembali ukuran variabel array
+scaler = MinMaxScaler()
+x_scaled = scaler.fit_transform(x_array)
+x_scaled
+
+#Menentukan dan konfigurasi fungsi k-means. syntax berikut merupakan syntax untuk mengelompokkan data menjadi 5 cluster.
+kmeans = KMeans(n_clusters = 5, random_state = 123)
+
+#Menentukan nilai K (cluster) dari data
+kmeans.fit(x_scaled)
+
+#Menampilkan pusat cluster
+print(kmeans.cluster_centers_)
+
+#Menambahkan kolom cluster dalam data frame ritel
+v["kluster"] = kmeans.labels_
+
+#Memfisualisasikan hasil cluster
+output = plt.scatter(x_scaled[:,0], x_scaled[:,1], s = 100, c = v.kluster, marker = "o", alpha = 1, )
+centers = kmeans.cluster_centers_
+plt.scatter(centers[:,0], centers[:,1], c='red', s=200, alpha=1 , marker="o", label = 'Centroids');
+plt.title("Hasil Klustering K-Means Pelanggan")
+plt.xlabel('Pendapatan Tahunan ($)')
+plt.ylabel('Skor Pembelanjaan')
+plt.colorbar (output)
+plt.legend()
+plt.show()
+
